@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,25 +37,275 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-        static String longestCommonPrefix(ArrayList<String> a) {
-            StringBuffer res = new StringBuffer();
-            char[] pref = a.get(0).toCharArray();
+    public static int nobleInteger(ArrayList<Integer> a){
+        Collections.sort(a);
 
-            for (int j = 0; j < pref.length; j++) {
-                char currant = pref[j];
-                for (int i = 1; i < a.size(); i++) {
-                    char[] w = a.get(i).toCharArray();
+        for(int i = 0; i<a.size(); i++){
+            if((i == a.size() -1 || a.get(i) != a.get(i+1)) && a.get(i)==a.size()-1-i){
+                return 1;
+            }
+        }
 
+        return  -1;
+    }
 
-                    if (w.length<=j||w[j] != currant) {
-                        return res.toString();
+    static ArrayList<Integer> maxset(ArrayList<Integer> a) {
+        ArrayList<Integer> res = new ArrayList<>();
+        long sum = 0;
+        ArrayList<Integer> val = new ArrayList<>();
+        long curSum = 0;
+
+        for(int i = 0; i<a.size(); i++){
+            if(a.get(i)>=0){
+                val.add(a.get(i));
+                curSum +=(long)a.get(i);
+            } else{
+                if(sum<curSum)  {
+                    res = new ArrayList<>(val);
+                    curSum = 0;
+
+                    val = new ArrayList<>();
+                } else {
+                    if (sum == curSum) {
+                        if (val.size() > res.size()) {
+                            res = new ArrayList<>(val);
+                            curSum = 0;
+                            val = new ArrayList<>();
+                        }
+
                     }
                 }
-                res.append(currant);
+            }
+        }
+
+        return res;
+    }
+
+
+    static String longestPalindrome(String s) {
+
+        char [] arr = s.toCharArray();
+        if(s.length()==0) return s;
+        String odd = polindrom(arr, 0,0);
+        String even = polindrom(arr, 0, 1);
+
+        return odd.length()>even.length()?odd:even;
+
+
+
+
+    }
+
+    static String polindrom(char[] arr, int l, int r ){
+        int start = 0;
+        int end = 0;
+        int max = 0;
+        for(int i=0; i<arr.length; i++){
+
+            int left = i+l;
+            int right = i+r;
+            int length = 0;
+            for( int k = 0; k<arr.length;k++){
+                if(left>=0&&right<arr.length){
+                    if(arr[left]==arr[right]) {
+                        length++;
+                        if(max<=length){
+                            start = left;
+                            end= right;
+                            max = length;
+                        }
+                        right++; left--;
+                    } else{
+                        break;
+                    }
+                }
+            }
+
+
+        }
+
+        StringBuffer str = new StringBuffer();
+        for(int d = start; d<=end; d++){
+            str.append(arr[d]);
+        }
+
+        return str.toString();
+
+    }
+
+
+    static int countPrimes(int n) {
+
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        if(n<1)return 0;
+
+        for(int i = 2; i<=n; i++){
+            int squer = (int)Math.sqrt(i);
+            if(squer<2){
+                res.add(i);
+            } else{
+                int j = 0;
+                boolean isPrime = true;
+                while(res.get(j)<=squer){
+                    int dev =  res.get(j);
+                    if(i%dev==0) isPrime=false;
+                    j++;
+                }
+                if(isPrime) res.add(i);
+
+
 
             }
-            return res.toString();
         }
+
+        return res.size();
+    }
+
+    static boolean isPalindrome(String s) {
+        s =  s.replaceAll("[^a-zA-Z ]", "");
+        s.toLowerCase();
+        char [] arr = s.toCharArray();
+        if(arr.length<=1)return true;
+        for(int i = 0; i<=arr.length/2; i++){
+            if(arr[i]-arr[arr.length-1-i]!=0) return false;
+        }
+        return true;
+    }
+
+
+
+    static int removeDuplicates(int[] nums) {
+
+        int a = 1;
+        int arr [] = new int [nums.length];
+
+        if(nums.length==0) return 0;
+
+        for(int i = 0; i<nums.length-1; i++) {
+            if(nums[i]<nums[i+1]) {
+                arr[i+1] = arr[i];
+                a++;
+            } else {
+                arr[i+1] = arr[i]+1;
+            }
+        }
+        for(int j = 0; j<nums.length; j++){
+            nums[j-arr[j]]= nums[j];
+        }
+
+        return a;
+
+    }
+
+
+    static ArrayList<String> textJustification(String val, int length){
+
+        String [] arr = val.split(" ");
+        ArrayList<String> res = new ArrayList<>();
+        int left=0;
+        int right=0;
+        int count = 0;
+
+        for(int i = 0; i<arr.length; i++){
+            int lengthOfCurrentWowd =0;
+            if(count==0) {
+                count= arr[i].length();
+            } else{
+                count+=arr[i].length()+1;
+            }
+
+            if(count>=length) {
+                int spaces=0;
+                if (count > length) {
+                    right = i - 1;
+                    spaces = length -(count - arr[i].length()+1);
+                }
+                if (count == length) {
+                    right = i;
+                }
+
+                while (spaces>=0){
+                    for(int k = left; k<right&&spaces>=0; k++){
+                        arr[k] = arr[k]+" ";
+                        spaces--;
+                    }
+                }
+
+                StringBuffer line  = new StringBuffer();
+                for(int r = left; r<right; r++){
+                    line.append(arr[r] + " ");
+                }
+                line.append(arr[right]);
+                res.add(line.toString());
+                left = right+1;
+                count = 0;
+
+            }
+
+            if(i==arr.length-1){
+                StringBuffer sp = new StringBuffer();
+                for(int f = 0; f<=length-count; f++){
+                    sp.append(" ");
+                }
+                StringBuffer line  = new StringBuffer();
+                for(int s = left; s<arr.length; s++){
+                    line.append(arr[s]);
+                }
+                line.append(sp);
+
+                res.add(line.toString());
+            }
+
+
+
+        }
+
+        return  res;
+    }
+
+
+
+
+//
+//    static  int maxSubArray(final List<Integer> a) {
+//
+//        int maxSumm = Integer.MIN_VALUE;
+//
+//
+//        for(int i = 0; i<a.size();i++){
+//            int currentSumm = 0;
+//            for(int j = i;j<a.size(); j++){
+//                currentSumm+= a.get(j);
+//                if(currentSumm>=maxSumm){
+//                    maxSumm=currentSumm;
+//                }
+//            }
+//
+//
+//        }
+//        return maxSumm;
+//
+//    }
+
+    static String longestCommonPrefix(ArrayList<String> a) {
+        StringBuffer res = new StringBuffer();
+        char[] pref = a.get(0).toCharArray();
+
+        for (int j = 0; j < pref.length; j++) {
+            char currant = pref[j];
+            for (int i = 1; i < a.size(); i++) {
+                char[] w = a.get(i).toCharArray();
+
+
+                if (w.length<=j||w[j] != currant) {
+                    return res.toString();
+                }
+            }
+            res.append(currant);
+
+        }
+        return res.toString();
+    }
 
     static int strStr(String haystack, String needle) {
         int res =  haystack.indexOf(needle);
@@ -112,6 +360,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    static  int a(ArrayList<Integer> arr){
+
+        Collections.sort(arr);
+        for(int i = 0; i<arr.size()-1; i++){
+            if(arr.get(i)==arr.get(i+1)) {
+                arr.remove(i+1);
+                i--;
+
+            }
+        }
+        return arr.size();
+    }
+
     static int degreeOfArray(int[] arr) {
         Map<Integer, List<Integer>> res = new HashMap<>();
         int lastIndex = 0;
@@ -136,6 +397,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
+
         int value = 100000;
         Iterator it = res.entrySet().iterator();
         while (it.hasNext()) {
@@ -154,123 +417,4 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    public ArrayList<ArrayList<Integer>> prettyPrint(int a) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        ArrayList<Integer> value = new ArrayList<>();
-        for (int d = 0; d < a * 2 - 1; d++) {
-            value.add(0);
-        }
-        for (int g = 0; g < a * 2 - 1; g++) {
-            res.add(value);
-        }
-        int x = a - 1;
-        int f = 1;
-        for (int i = a - 1; i >= 0; i--) {
-            value = new ArrayList<>();
-            for (int d = 0; d < a * 2 - 1; d++) {
-                value.add(0);
-            }
-            int k = 1;
-            int h = a - 1;
-            for (int j = a - 1; j >= 0; j--) {
-                int val = k;
-                if (f > k) {
-                    val = f;
-                }
-
-                if (j == h) {
-                    value.set(j, val);
-                } else {
-                    value.set(j, val);
-                    value.set(h, val);
-                }
-
-                k++;
-                h++;
-            }
-            if (x == i) {
-                res.set(i, value);
-            } else {
-                res.set(i, value);
-                res.set(x, value);
-            }
-            x++;
-            f++;
-
-        }
-        return res;
-    }
-
-    public int kthsmallest(final List<Integer> a, int k) {
-
-        PriorityQueue<Integer> res =
-                new PriorityQueue<>();
-
-        for (int i = 0; i < a.size(); i++) {
-            res.add(a.get(i));
-        }
-        for (int j = 0; j < k - 1; j++) {
-            res.poll();
-        }
-        return res.peek();
-    }
-
-
-    class ListNode {
-        public int val;
-        public ListNode next;
-
-        ListNode(int x) {
-            val = x;
-            next = null;
-        }
-    }
-
-    public ListNode subtract(ListNode a) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        ListNode node = a;
-
-        while (node != null) {
-            list.add(node.val);
-            node = node.next;
-        }
-
-        node = a;
-        ListNode res = node;
-        for (int i = list.size() - 1; i > (list.size() + 1) / 2 - 1; i--) {
-            node.val = list.get(i) - node.val;
-            node = node.next;
-        }
-        return res;
-    }
-
-    public int longestConsecutive(final List<Integer> a) {
-        TreeSet<Integer> list = new TreeSet<>();
-        for(int i = 0; i<a.size(); i++){
-            list.add(a.get(i));
-        }
-        int maxSize = 0;
-        ArrayList<Integer> res = new ArrayList<>();
-        if(!list.isEmpty()) {
-            res.add(list.first());
-            maxSize = res.size();
-        }
-        while (list.size()>1){
-            int first = list.first();
-            list.remove(first);
-            int second = list.first();
-            if(second - first==1){
-                res.add(second);
-                if(res.size()>=maxSize)  maxSize = res.size();
-            } else {
-                res = new ArrayList();
-                res.add(second);
-            }
-        }
-
-        return maxSize;
-
-    }
-
 }
