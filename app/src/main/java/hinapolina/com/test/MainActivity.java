@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,25 +20,88 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    static  int maxSubArray(final List<Integer> a) {
+    static ArrayList<ArrayList<Integer>> anagrams(final List<String> a) {
 
-        int maxSumm = Integer.MIN_VALUE;
+        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+        Set<Integer> check = new HashSet<Integer>();
 
 
-        for(int i = 0; i<a.size();i++){
-            int currentSumm = 0;
-            for(int j = i;j<a.size(); j++){
-                currentSumm+= a.get(j);
-                if(currentSumm>=maxSumm){
-                    maxSumm=currentSumm;
+
+        for(int i = 0; i<a.size(); i++){
+            ArrayList<Integer> val = new ArrayList<>();
+            if(!check.contains(i)) {
+                val.add(i+1);
+            }
+
+            for(int j = i+1; j<a.size(); j++){
+                if(!(check.contains(i)&&check.contains(j))){
+                    if(isAnagram(a.get(i), a.get(j))) {
+                        val.add(j+1);
+                        check.add(i);
+                        check.add(j);
+                    }
                 }
             }
 
 
+            if(!val.isEmpty()) res.add(val);
+
+
         }
-        return maxSumm;
+
+        return res;
+    }
+
+
+
+    static boolean isAnagram(String s, String t) {
+        if(s.length()!=t.length()) return false;
+        if(s.length() == t.length() && t.length()==0) return true;
+
+
+        char [] arrS = s.toCharArray();
+        char [] arrT = t.toCharArray();
+
+        Arrays.sort(arrS);
+        Arrays.sort(arrT);
+
+        for(int i = 0; i<arrS.length; i++){
+            if(((int)arrS[i]^arrT[i])!=0) return false;
+        }
+
+        return true;
 
     }
+
+
+    public static int colorful(int a) {
+        String temp = a+"";
+        ArrayList<Integer> arr = new ArrayList<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < temp.length(); i++)
+        {
+            arr.add(temp.charAt(i) - '0');
+            if (set.contains(temp.charAt(i) - '0')) return 0;
+            set.add(temp.charAt(i) - '0');
+        }
+        int step = 1;
+        while (step<=arr.size()-1) {
+            for (int i = 0; i < arr.size() - step; i++) {
+                int sum = 1;
+                for (int j = i; j <= i+step; j++) {
+                    sum *= arr.get(j);
+                }
+                if (set.contains(sum)) return 0;
+                set.add(sum);
+            }
+            step++;
+        }
+
+
+
+        return 1;
+    }
+
 
     public static int nobleInteger(ArrayList<Integer> a){
         Collections.sort(a);
@@ -418,3 +484,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
