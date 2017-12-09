@@ -20,6 +20,50 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
+    static boolean isValidSudoku(char[][] board) {
+
+        String s = ".";
+
+
+
+        for(int i = 0 ; i<9; i++){
+            Set<Character> vertical = new HashSet<Character>();
+            Set<Character> horisontal = new HashSet<Character>();
+            for(int j = 0; j<9; j++){
+                if (board[j][i]==s.charAt(0)) break;
+                if(vertical.contains(board[j][i])) return false;
+                else vertical.add(board[j][i]);
+                if(horisontal.contains(board[i][j])) return false;
+                else horisontal.add(board[i][j]);
+            }
+        }
+
+        for(int t = 0; t<6; t+=3){
+            for(int h = 0; h<6; h+=3){
+                if(!isVal(t, h, board)) return false;
+            }
+        }
+
+
+        return true;
+
+
+    }
+
+    static boolean isVal(int i, int j, char [][] board){
+
+        String s = ".";
+        Set<Character> set = new HashSet<Character>();
+        for(int k = i ; k<i+3; k++){
+            for(int l = j; l<j+3; l++){
+                if (board[k][l]==s.charAt(0)) break;
+                if(set.contains(board[k][l])) return false;
+                else set.add(board[k][l]);
+
+            }
+        }
+        return true;
+    }
     static ArrayList<ArrayList<Integer>> anagrams(final List<String> a) {
 
         ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
@@ -484,4 +528,3 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
-
